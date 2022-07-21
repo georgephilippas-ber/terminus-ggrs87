@@ -3,23 +3,15 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 //import App from './App';
 import reportWebVitals from './reportWebVitals';
-
-import {OpenStreetMap} from "./components/fundamental";
-import {Land} from "./components/land";
-
-import {PointCollection} from "./core/point-collection";
+import {Container} from "./components/interface/main";
 
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
 
-let pCollection = new PointCollection([[20, 30]]);
-
 root.render(
     <React.StrictMode>
-        <OpenStreetMap className={"w-screen h-screen"}>
-            <Land pointCollection={pCollection}/>
-        </OpenStreetMap>
+        <Container/>
     </React.StrictMode>
 );
 

@@ -7,9 +7,9 @@ export function OpenStreetMap(props: { zoom?: number; style?: CSSProperties; cla
     let defaultZoom: number = 6;
 
     return (
-        <MapContainer className={props.className} keyboard={false} dragging={false} zoomControl={false}
+        <MapContainer className={props.className} keyboard={false} dragging={true} zoomControl={false}
                       zoom={props.zoom ?? defaultZoom} style={props.style}
-                      center={new LatLng(0., 0.)} scrollWheelZoom={false}>
+                      center={new LatLng(0., 0.)} scrollWheelZoom={true}>
             <TileLayer attribution='&copy;' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"/>
             {props.children}
         </MapContainer>
