@@ -19,6 +19,11 @@ export class PointCollection
         this.array_.push(position);
     }
 
+    length()
+    {
+        return this.array_.length;
+    }
+
     collectionAsLatLng(): LatLng[]
     {
         return this.array_.map(value => new LatLng(value[0], value[1]));
