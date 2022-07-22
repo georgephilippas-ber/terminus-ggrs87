@@ -30,7 +30,7 @@ function to_collection(array: number[]): collection
 {
     let array_: collection = [];
 
-    if (array.length == 0)
+    if (array.length === 0)
         return [];
 
     for (let i = 0; i < Math.floor(array.length / 2) * 2; i += 2)
@@ -65,7 +65,7 @@ export class Collection
 
     centroid(): number[]
     {
-        if (this.dimension() == 0 || this.length() == 0)
+        if (this.dimension() === 0 || this.length() === 0)
             return [];
 
         return Array(this.dimension()).fill(0).map((value, index) => mean(this.array_.map(value => value[index])));
@@ -93,7 +93,7 @@ export class Collection
 
     validateBounds(bounds: bounds_type)
     {
-        return !Array(this.dimension()).fill(0).map((value, index) => this.array_.filter(value => value[index] >= bounds[index].min && value[index] <= bounds[index].max).length).filter(value => value != this.array_.length).length
+        return !Array(this.dimension()).fill(0).map((value, index) => this.array_.filter(value => value[index] >= bounds[index].min && value[index] <= bounds[index].max).length).filter(value => value !== this.array_.length).length
     }
 }
 

@@ -7,7 +7,7 @@ import {toGeographical, toUTM} from "./coordinate-systems";
 
 const GGRS87_greece_bounds: bounds_type = [{min: 94874.71, max: 3868409.44}, {min: 857398.00, max: 4630676.91}];
 
-const WGS84_greece_bounds: bounds_type = [{min: 28.3, max: 41.75}, {min: 19.57, max: 34.88}];
+//const WGS84_greece_bounds: bounds_type = [{min: 28.3, max: 41.75}, {min: 19.57, max: 34.88}];
 
 //
 

@@ -4,12 +4,10 @@ import {OpenStreetMap} from "../fundamental";
 import {Land} from "../land";
 import React, {useMemo, useState} from "react";
 
-import {Collection} from "../../core/point-collection";
-
-import {Button, Input} from "@material-tailwind/react";
-
 import {processPlane} from "../../core/point-collection";
-import {toTableData, getSet} from "../../core/conversion";
+
+import {Input} from "@material-tailwind/react";
+import {getSet, toTableData} from "../../core/conversion";
 
 function TableRow(props: { index: number; data: number[] })
 {

@@ -31,7 +31,7 @@ const ellipsoid: ellipsoidParameters_type =
     };
 
 type coords = [number, number, number];
-
+/*
 function toRadians_spherical(position: coords): coords
 {
     return [position[0] * Math.PI / 180., position[1] * Math.PI / 180., position[2]];
@@ -85,6 +85,7 @@ function ecefSpherical(ecefCartesian: coords, radius: number = cartesianLength(e
 
     return [phi, lambda, radius];
 }
+ */
 
 type preliminaryQuantities_type =
     {

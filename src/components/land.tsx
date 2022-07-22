@@ -20,7 +20,7 @@ export function Land(props: { collection: Collection })
         {
             map.flyTo(greece_LatLng);
         }
-    }, [props.collection]);
+    }, [props.collection, map]);
 
     switch (props.collection.length())
     {
