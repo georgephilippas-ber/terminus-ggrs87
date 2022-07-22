@@ -65,12 +65,15 @@ export class Collection
 
     centroid(): number[]
     {
-        return Array(this.dimension()).fill(0).map((value, index) => mean(this.array_.map(value => value[index])));
+        if (this.dimension() == 0 || this.length() == 0)
+            return [];
+        else
+            return Array(this.dimension()).fill(0).map((value, index) => mean(this.array_.map(value => value[index])));
     }
 
     area(): number
     {
-        if (this.dimension() < 2)
+        if (this.dimension() < 2 || this.length() < 3)
             return -1.;
 
         let partialSum = 0.;

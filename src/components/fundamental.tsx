@@ -4,7 +4,7 @@ import React, {CSSProperties} from "react";
 
 export function OpenStreetMap(props: { zoom?: number; style?: CSSProperties; className?: string; children?: React.ReactNode })
 {
-    let defaultZoom: number = 6;
+    let defaultZoom: number = 7;
 
     return (
         <MapContainer className={props.className} keyboard={false} dragging={true} zoomControl={false}

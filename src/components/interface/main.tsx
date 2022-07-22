@@ -2,7 +2,7 @@ import "./main.css"
 
 import {OpenStreetMap} from "../fundamental";
 import {Land} from "../land";
-import React, {useState} from "react";
+import React, {useMemo, useState} from "react";
 
 import {Collection} from "../../core/point-collection";
 
@@ -16,7 +16,7 @@ function TableRow(props: { index: number; data: number[] })
     return (
         <tr key={props.index}>
             <th>{props.index}</th>
-            {props.data.map(value => <td>{value}</td>)}
+            {props.data.map(value => <td>{value.toFixed(3)}</td>)}
         </tr>
     );
 }
@@ -56,15 +56,22 @@ export function Container()
 {
     let [textInputValue, setTextInputValue] = useState<string>("");
 
+    let collectionSet = useMemo(() => {
+        return getSet(processPlane(textInputValue))
+    }, [textInputValue]);
+
     return (
         <div className={"w-screen h-screen flex"}>
             <OpenStreetMap className={"w-2/3 h-full m-3"}>
-                <Land collection={new Collection([[0, 0]])}/>
+                <Land collection={collectionSet.wsg84}/>
             </OpenStreetMap>
             <div className={"w-auto h-full flex grow flex-col m-3 p-3 space-y-2 justify-start items-stretch"}>
                 <Input value={textInputValue} onChange={event => setTextInputValue(event.target.value)}
                        placeholder={"Points"} variant={"standard"} className={"w-full"}/>
-                <CoordinatesTable data={toTableData(getSet(processPlane(textInputValue)))}/>
+                <CoordinatesTable data={toTableData(collectionSet)}/>
+                <div className={"status"}>
+                    Area {collectionSet.utm.area() !== -1 ? collectionSet.utm.area().toFixed(2) + " m²" : "0 m²"}
+                </div>
             </div>
         </div>
     )

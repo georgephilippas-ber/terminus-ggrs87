@@ -60,7 +60,7 @@ export function toTableData(collectionSet: converted_set_type): number[][]
     let length: number = Math.min(collectionSet.utm.length(), collectionSet.wsg84.length());
 
     for (let i = 0; i < length; i++)
-        data_.push([collectionSet.wsg84.getCollection()[i][0], collectionSet.wsg84.getCollection()[i][1]]);
+        data_.push([collectionSet.wsg84.getCollection()[i][0], collectionSet.wsg84.getCollection()[i][1], collectionSet.utm.getCollection()[i][0], collectionSet.utm.getCollection()[i][1]]);
 
     return data_;
 }
