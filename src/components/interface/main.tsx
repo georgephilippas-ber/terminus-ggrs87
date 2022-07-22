@@ -61,8 +61,8 @@ export function Container()
     }, [textInputValue]);
 
     return (
-        <div className={"w-screen h-screen flex"}>
-            <OpenStreetMap className={"w-2/3 h-full m-3 shadow-2xl"}>
+        <div style={{height: "98vh"}} className={"w-screen h-screen flex"}>
+            <OpenStreetMap className={"w-2/3 m-3 shadow-2xl"}>
                 <Land collection={collectionSet.wsg84}/>
             </OpenStreetMap>
             <div className={"w-auto h-full flex grow flex-col m-3 p-3 space-y-2 justify-start items-stretch"}>
