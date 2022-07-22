@@ -65,7 +65,7 @@ export function Container()
             </OpenStreetMap>
             <div className={"w-auto h-full flex grow flex-col m-3 p-3 space-y-2 justify-start items-stretch"}>
                 <Input value={textInputValue} onChange={event => setTextInputValue(event.target.value)}
-                       placeholder={"Start typing coordinates in pairs WGS84 or GGRS87 separated by comma (,)"} variant={"standard"} className={"w-full"}/>
+                       placeholder={"Start typing coordinates in pairs WGS84 or GGRS87 separated by commas (,)"} variant={"standard"} className={"w-full"}/>
                 <CoordinatesTable data={toTableData(collectionSet)}/>
                 <div className={"status w-full py-3 px-4 shadow-grey-600 shadow-2xl"}>
                     {collectionSet.utm.area() !== -1 ? collectionSet.utm.area().toLocaleString("en-GB", {maximumFractionDigits: 2}) + " m²" : "0 m²"}
