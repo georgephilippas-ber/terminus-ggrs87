@@ -121,7 +121,7 @@ type projectionParameters_type =
         scaleFactor: number;
     }
 
-let defaultProjectionParameters: projectionParameters_type =
+const GGRS87_UTM_parameters: projectionParameters_type = Object.freeze(
     {
         refCoordinates:
             {
@@ -130,10 +130,12 @@ let defaultProjectionParameters: projectionParameters_type =
             },
         scaleFactor: 0.9996,
         refMeridian_lng: 24
-    }
+    });
 
-export function utm_toLocalGeographical_degrees(utmCoordinates: coords, projectionParameters: projectionParameters_type = defaultProjectionParameters, preliminary: preliminaryQuantities_type = getPreliminary(ellipsoid)): coords
+export function toGeographical(utmCoordinates: coords, projectionParameters: projectionParameters_type = GGRS87_UTM_parameters): coords
 {
+    let preliminary: preliminaryQuantities_type = getPreliminary(ellipsoid);
+
     let northing: number = utmCoordinates[1], easting: number = utmCoordinates[0];
 
     let northing_ = projectionParameters.refCoordinates.northing,
@@ -155,4 +157,25 @@ export function utm_toLocalGeographical_degrees(utmCoordinates: coords, projecti
     let lambda = projectionParameters.refMeridian_lng * Math.PI / 180. + Math.atan(Math.sinh(eta_prime) / Math.cos(xi_prime));
 
     return [phi * 180 / Math.PI, lambda * 180 / Math.PI, utmCoordinates[2]];
+}
+
+export function toUTM(geographicalCoordinates: coords, projectionParameters: projectionParameters_type = GGRS87_UTM_parameters)
+{
+    let preliminary: preliminaryQuantities_type = getPreliminary(ellipsoid);
+
+    let phi = geographicalCoordinates[0] * Math.PI / 180.;
+    let lambda = geographicalCoordinates[1] * Math.PI / 180.;
+
+    let t = Math.sinh(Math.atanh(Math.sin(phi)) - 2 * Math.sqrt(preliminary.n) / (1 + preliminary.n) * Math.atanh(2 * Math.sqrt(preliminary.n) * Math.sin(phi) / (1 + preliminary.n)));
+
+    let xi_prime = Math.atan(t / (Math.cos(lambda - projectionParameters.refMeridian_lng)));
+    let eta_prime = Math.atanh(Math.sin(lambda - projectionParameters.refMeridian_lng) / Math.sqrt(1 + t ** 2));
+
+    let E = projectionParameters.refCoordinates.easting + projectionParameters.scaleFactor * preliminary.A * (
+        eta_prime + sum(preliminary.alpha.map((value, index) => value * Math.cos(2 * (index + 1) * xi_prime) * Math.sinh(2 * (index + 1) * eta_prime))));
+
+    let N = projectionParameters.refCoordinates.northing + projectionParameters.scaleFactor * preliminary.A * (
+        xi_prime + sum(preliminary.alpha.map((value, index) => value * Math.sin(2. * (index + 1) * xi_prime) * Math.cosh(2. * (index + 1) * eta_prime))));
+
+    return [E, N, geographicalCoordinates[2]];
 }
