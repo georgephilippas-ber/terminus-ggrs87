@@ -9,6 +9,7 @@ import {Collection} from "../../core/point-collection";
 import {Button, Input} from "@material-tailwind/react";
 
 import {processPlane} from "../../core/point-collection";
+import {toTableData, getSet} from "../../core/conversion";
 
 function TableRow(props: { index: number; data: number[] })
 {
@@ -37,10 +38,10 @@ function CoordinatesTable(props: { data: number[][] })
                 </tr>
                 <tr>
                     <th>Point</th>
-                    <td>X (m)</td>
-                    <td>Y (m)</td>
                     <td>φ (DD)</td>
                     <td>λ (DD)</td>
+                    <td>X (m)</td>
+                    <td>Y (m)</td>
                 </tr>
                 </thead>
                 <tbody>
@@ -63,10 +64,7 @@ export function Container()
             <div className={"w-auto h-full flex grow flex-col m-3 p-3 space-y-2 justify-start items-stretch"}>
                 <Input value={textInputValue} onChange={event => setTextInputValue(event.target.value)}
                        placeholder={"Points"} variant={"standard"} className={"w-full"}/>
-                <CoordinatesTable data={processPlane(textInputValue).getCollection()}/>
-                <div>
-                    <Button>Compute</Button>
-                </div>
+                <CoordinatesTable data={toTableData(getSet(processPlane(textInputValue)))}/>
             </div>
         </div>
     )
