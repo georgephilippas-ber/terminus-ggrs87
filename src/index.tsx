@@ -5,13 +5,20 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import {Container} from "./components/interface/main";
 
+import {BrowserView, MobileView} from 'react-device-detect';
+
 const root = ReactDOM.createRoot(
     document.getElementById('root') as HTMLElement
 );
 
 root.render(
     <React.StrictMode>
-        <Container/>
+        <BrowserView>
+            <Container/>
+        </BrowserView>
+        <MobileView className={"w-screen h-screen flex justify-center items-center"}>
+            application currently not available on mobile devices
+        </MobileView>
     </React.StrictMode>
 );
 
