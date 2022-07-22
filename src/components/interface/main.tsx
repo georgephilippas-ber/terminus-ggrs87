@@ -2,10 +2,13 @@ import "./main.css"
 
 import {OpenStreetMap} from "../fundamental";
 import {Land} from "../land";
-import React from "react";
+import React, {useState} from "react";
 
-import {PointCollection} from "../../core/point-collection";
+import {Collection} from "../../core/point-collection";
+
 import {Button, Input} from "@material-tailwind/react";
+
+import {processPlane} from "../../core/point-collection";
 
 function TableRow(props: { index: number; data: number[] })
 {
@@ -17,18 +20,7 @@ function TableRow(props: { index: number; data: number[] })
     );
 }
 
-function toRows(cartesianCollection: PointCollection, geographicalCollection: PointCollection): JSX.Element[]
-{
-    let array = [];
-
-    for (let i = 0; i < cartesianCollection.length(); i++)
-        array.push(<TableRow key={i} index={i + 1}
-                             data={[...cartesianCollection.array_[i], ...geographicalCollection.array_[i]]}/>);
-
-    return array;
-}
-
-function Table(props: { cartesianCollection?: PointCollection, geographicalCollection?: PointCollection })
+function CoordinatesTable(props: { data: number[][] })
 {
     return (
         <div className={"h-full"}>
@@ -52,7 +44,7 @@ function Table(props: { cartesianCollection?: PointCollection, geographicalColle
                 </tr>
                 </thead>
                 <tbody>
-                {props.cartesianCollection && props.geographicalCollection ? toRows(props.cartesianCollection, props.geographicalCollection) : null}
+                {props.data.map((value, index) => <TableRow key={index} index={index + 1} data={value}/>)}
                 </tbody>
             </table>
         </div>
@@ -61,14 +53,17 @@ function Table(props: { cartesianCollection?: PointCollection, geographicalColle
 
 export function Container()
 {
+    let [textInputValue, setTextInputValue] = useState<string>("");
+
     return (
         <div className={"w-screen h-screen flex"}>
             <OpenStreetMap className={"w-2/3 h-full m-3"}>
-                <Land pointCollection={new PointCollection([[20, 30]])}/>
+                <Land collection={new Collection([[0, 0]])}/>
             </OpenStreetMap>
             <div className={"w-auto h-full flex grow flex-col m-3 p-3 space-y-2 justify-start items-stretch"}>
-                <Input placeholder={"Points"} variant={"standard"} className={"w-full"}/>
-                <Table geographicalCollection={new PointCollection([[30, 40]])} cartesianCollection={new PointCollection([[10, 20]])}/>
+                <Input value={textInputValue} onChange={event => setTextInputValue(event.target.value)}
+                       placeholder={"Points"} variant={"standard"} className={"w-full"}/>
+                <CoordinatesTable data={processPlane(textInputValue).getCollection()}/>
                 <div>
                     <Button>Compute</Button>
                 </div>
