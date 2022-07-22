@@ -17,8 +17,10 @@ export function Land(props: { collection: Collection })
         if (centroid_.length > 0)
             map.flyTo(new LatLng(centroid_[0], centroid_[1]));
         else
+        {
             map.flyTo(greece_LatLng);
-    });
+        }
+    }, [props.collection]);
 
     switch (props.collection.length())
     {

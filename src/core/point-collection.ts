@@ -67,8 +67,8 @@ export class Collection
     {
         if (this.dimension() == 0 || this.length() == 0)
             return [];
-        else
-            return Array(this.dimension()).fill(0).map((value, index) => mean(this.array_.map(value => value[index])));
+
+        return Array(this.dimension()).fill(0).map((value, index) => mean(this.array_.map(value => value[index])));
     }
 
     area(): number
@@ -79,7 +79,9 @@ export class Collection
         let partialSum = 0.;
 
         for (let i = 0; i < this.array_.length - 1; i++)
-            partialSum += this.array_[i][0] * this.array_[i + 1][1] - this.array_[i + 1][0] * this.array_[i][1];
+            partialSum += (this.array_[i][0] * this.array_[i + 1][1]) - (this.array_[i + 1][0] * this.array_[i][1]);
+
+        partialSum += (this.array_[this.array_.length - 1][0] * this.array_[0][1] - this.array_[0][0] * this.array_[this.array_.length - 1][1]);
 
         return 1 / 2 * Math.abs(partialSum);
     }
