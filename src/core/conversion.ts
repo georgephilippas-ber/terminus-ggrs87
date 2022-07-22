@@ -5,9 +5,9 @@ import {toGeographical, toUTM} from "./coordinate-systems";
 
 // http://epsg.io/2100
 
-const GGRS87_bounds: bounds_type = [{min: 94874.71, max: 3868409.44}, {min: 857398.00, max: 4630676.91}];
+const GGRS87_greece_bounds: bounds_type = [{min: 94874.71, max: 3868409.44}, {min: 857398.00, max: 4630676.91}];
 
-const WGS84_bounds: bounds_type = [{min: 28.3, max: 41.75}, {min: 19.57, max: 34.88}];
+const WGS84_greece_bounds: bounds_type = [{min: 28.3, max: 41.75}, {min: 19.57, max: 34.88}];
 
 //
 
@@ -36,13 +36,13 @@ type converted_set_type = {
 
 export function getSet(sourceCollection: Collection): converted_set_type
 {
-    let utm: Collection, wsg84: Collection;
+    let utm: Collection = new Collection([]), wsg84: Collection = new Collection([]);
 
-    if (sourceCollection.validateBounds(GGRS87_bounds))
+    if (sourceCollection.validateBounds(GGRS87_greece_bounds))
     {
         utm = sourceCollection;
         wsg84 = calculate(sourceCollection, "wsg84");
-    } else
+    } else if (sourceCollection.validateBounds([{min: -90, max: 90}, {min: -180, max: 180}]))
     {
         wsg84 = sourceCollection;
         utm = calculate(sourceCollection, "utm");
