@@ -1,6 +1,6 @@
 type coords = number[];
 
-type collection = coords[];
+type coords_array = coords[];
 
 export type bounds_type = { min: number, max: number }[];
 
@@ -26,9 +26,9 @@ function split(string_: string): number[]
     return string_.split(",").map(value => parseFloat(value)).filter(value => !isNaN(value));
 }
 
-function to_collection(array: number[]): collection
+function toCoordsArray(array: number[]): coords_array
 {
-    let array_: collection = [];
+    let array_: coords_array = [];
 
     if (array.length === 0)
         return [];
@@ -41,9 +41,9 @@ function to_collection(array: number[]): collection
 
 export class Collection
 {
-    array_: collection
+    array_: coords_array
 
-    constructor(array_: collection = [])
+    constructor(array_: coords_array = [])
     {
         this.array_ = array_;
     }
@@ -97,7 +97,9 @@ export class Collection
     }
 }
 
-export function processPlane(string_: string): Collection
+//
+
+export function process(string_: string): Collection
 {
-    return new Collection(to_collection(split(preprocess(string_))));
+    return new Collection(toCoordsArray(split(preprocess(string_))));
 }

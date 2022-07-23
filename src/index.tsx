@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import './index.css';
 //import App from './App';
 import reportWebVitals from './reportWebVitals';
-import {Container} from "./components/interface/main";
+import {DekstopView} from "./components/interface/main";
 
 import {BrowserView, MobileView} from 'react-device-detect';
 
@@ -14,7 +14,7 @@ const root = ReactDOM.createRoot(
 root.render(
     <React.StrictMode>
         <BrowserView>
-            <Container/>
+            <DekstopView/>
         </BrowserView>
         <MobileView className={"w-screen h-screen flex justify-center items-center"}>
             application currently not available on mobile devices

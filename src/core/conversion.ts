@@ -30,11 +30,11 @@ function calculate(sourceCollection: Collection, targetCoordinateSystem: "utm" |
     return targetCollection;
 }
 
-type converted_set_type = {
-    utm: Collection, wsg84: Collection
+type coordinatesSet_type = {
+    UTM: Collection, WGS84: Collection
 };
 
-export function getSet(sourceCollection: Collection): converted_set_type
+export function getCoordinatesSet(sourceCollection: Collection): coordinatesSet_type
 {
     let utm: Collection = new Collection([]), wsg84: Collection = new Collection([]);
 
@@ -49,18 +49,18 @@ export function getSet(sourceCollection: Collection): converted_set_type
     }
 
     return {
-        utm, wsg84
+        UTM: utm, WGS84: wsg84
     }
 }
 
-export function toTableData(collectionSet: converted_set_type): number[][]
+export function toTableData(collectionSet: coordinatesSet_type): number[][]
 {
     let data_: number[][] = [];
 
-    let length: number = Math.min(collectionSet.utm.length(), collectionSet.wsg84.length());
+    let length: number = Math.min(collectionSet.UTM.length(), collectionSet.WGS84.length());
 
     for (let i = 0; i < length; i++)
-        data_.push([collectionSet.wsg84.getCollection()[i][0], collectionSet.wsg84.getCollection()[i][1], collectionSet.utm.getCollection()[i][0], collectionSet.utm.getCollection()[i][1]]);
+        data_.push([collectionSet.WGS84.getCollection()[i][0], collectionSet.WGS84.getCollection()[i][1], collectionSet.UTM.getCollection()[i][0], collectionSet.UTM.getCollection()[i][1]]);
 
     return data_;
 }

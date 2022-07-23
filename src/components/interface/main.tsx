@@ -6,10 +6,10 @@ import {OpenStreetMap} from "../fundamental";
 import {Land} from "../land";
 import React, {MouseEventHandler, useMemo, useState} from "react";
 
-import {processPlane} from "../../core/point-collection";
+import {process} from "../../core/point-collection";
 
-import {IconButton, Input} from "@material-tailwind/react";
-import {getSet, toTableData} from "../../core/conversion";
+import {IconButton, Input, Tabs, Tab, TabsBody, TabsHeader} from "@material-tailwind/react";
+import {getCoordinatesSet, toTableData} from "../../core/conversion";
 
 function TableRow(props: { index: number; data: number[] })
 {
@@ -53,47 +53,88 @@ function CoordinatesTable(props: { data: number[][] })
     )
 }
 
-export function Container()
+export function useController()
 {
-    let [textInputValue, setTextInputValue] = useState<string>("");
+    let [coordinatesInput, setCoordinatesInput] = useState<string>("");
 
-    let collectionSet = useMemo(() =>
+    let coordinatesSet = useMemo(() =>
     {
-        return getSet(processPlane(textInputValue))
-    }, [textInputValue]);
+        return getCoordinatesSet(process(coordinatesInput));
+    }, [coordinatesInput]);
 
-    let onLocationButtonClick: MouseEventHandler<HTMLButtonElement> = (event) =>
+    let onClick_locationButton: MouseEventHandler<HTMLButtonElement> = (event) =>
     {
-        if ("geolocation" in navigator)
-            navigator.geolocation.getCurrentPosition(position =>
-            {
-                if (textInputValue.trim())
-                    setTextInputValue([textInputValue, position.coords.latitude, position.coords.longitude].join(", "));
-                else
-                    setTextInputValue([position.coords.latitude, position.coords.longitude].join(", "));
-            });
+        navigator.geolocation.getCurrentPosition(position =>
+        {
+            let coordinates = [position.coords.latitude, position.coords.longitude];
+
+            if (coordinatesInput.trim())
+                setCoordinatesInput([coordinatesInput, ...coordinates].join(", "));
+            else
+                setCoordinatesInput(coordinates.join(", "));
+        });
     }
+
+    return {
+        coordinatesInput:
+            {
+                value: coordinatesInput,
+                set: setCoordinatesInput,
+            },
+        coordinatesSet,
+        handlers:
+            {
+                locationButton:
+                    {
+                        onClick: onClick_locationButton
+                    }
+            }
+    }
+}
+
+export function DekstopView()
+{
+    let controller = useController();
 
     return (
         <div style={{height: "98vh"}} className={"w-screen h-screen flex"}>
             <OpenStreetMap className={"w-2/3 m-3 shadow-2xl"}>
-                <Land collection={collectionSet.wsg84}/>
+                <Land collection={controller.coordinatesSet.WGS84}/>
             </OpenStreetMap>
             <div className={"w-auto h-full flex grow flex-col m-3 p-3 space-y-2 justify-start items-stretch"}>
                 <div className={"px-1 flex flex-row space-x-4"}>
-                    <Input value={textInputValue} onChange={event => setTextInputValue(event.target.value)}
+                    <Input value={controller.coordinatesInput.value}
+                           onChange={event => controller.coordinatesInput.set(event.target.value)}
                            placeholder={"Start typing coordinates in pairs WGS84 or GGRS87 separated by commas (,)"}
                            variant={"standard"} className={"w-full"}/>
-
-                    <IconButton onClick={onLocationButtonClick}><Location2/></IconButton>
+                    <IconButton onClick={controller.handlers.locationButton.onClick}><Location2/></IconButton>
                 </div>
-                <CoordinatesTable data={toTableData(collectionSet)}/>
+                <CoordinatesTable data={toTableData(controller.coordinatesSet)}/>
                 <div className={"status w-full py-3 px-4 shadow-grey-600 shadow-2xl"}>
-                    {collectionSet.utm.area() !== -1 ? collectionSet.utm.area().toLocaleString("en-GB", {maximumFractionDigits: 2}) + " m²" : "0 m²"}
+                    {controller.coordinatesSet.UTM.area() !== -1 ? controller.coordinatesSet.UTM.area().toLocaleString("en-GB", {maximumFractionDigits: 2}) + " m²" : "0 m²"}
                 </div>
             </div>
         </div>
     )
+}
+
+export function MobileView()
+{
+    let controller = useController();
+
+    return (
+        <Tabs value={"0"}>
+            <TabsHeader>
+                <Tab value={""}>
+                    DIV
+                </Tab>
+            </TabsHeader>
+            <TabsBody>
+
+            </TabsBody>
+        </Tabs>
+
+    );
 }
 
 // 537298.57, 4133737.88,
