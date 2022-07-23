@@ -1,6 +1,6 @@
 import "./main.css"
 
-import {Location2} from "@styled-icons/icomoon"
+import {Earth, Location2} from "@styled-icons/icomoon"
 
 import {OpenStreetMap} from "../fundamental";
 import {Land} from "../land";
@@ -8,7 +8,7 @@ import React, {MouseEventHandler, useMemo, useState} from "react";
 
 import {process} from "../../core/point-collection";
 
-import {IconButton, Input, Tabs, Tab, TabsBody, TabsHeader} from "@material-tailwind/react";
+import {IconButton, Input, Tabs, Tab, TabsBody, TabsHeader, TabPanel} from "@material-tailwind/react";
 import {getCoordinatesSet, toTableData} from "../../core/conversion";
 
 function TableRow(props: { index: number; data: number[] })
@@ -25,10 +25,10 @@ function TableRow(props: { index: number; data: number[] })
 function CoordinatesTable(props: { data: number[][] })
 {
     return (
-        <div className={"h-full table-wrapper"}>
-            <table className={"w-full fl-table"}>
-                <thead>
-                <tr className={"table-header-systems"}>
+        <div className={"table-wrapper h-full overflow-auto my-2"} style={{display: "initial"}}>
+            <table className={"fl-table"}>
+                <thead className={""}>
+                <tr>
                     <th/>
                     <th colSpan={2}>
                         WGS 84
@@ -37,7 +37,7 @@ function CoordinatesTable(props: { data: number[][] })
                         GGRS 87
                     </th>
                 </tr>
-                <tr className={"table-header"}>
+                <tr>
                     <th>Point</th>
                     <td>φ (DD)</td>
                     <td>λ (DD)</td>
@@ -45,7 +45,7 @@ function CoordinatesTable(props: { data: number[][] })
                     <td>Y (m)</td>
                 </tr>
                 </thead>
-                <tbody>
+                <tbody className={"grow"}>
                 {props.data.map((value, index) => <TableRow key={index} index={index + 1} data={value}/>)}
                 </tbody>
             </table>
@@ -92,20 +92,20 @@ export function useController()
     }
 }
 
-export function DekstopView()
+export function Desktop()
 {
     let controller = useController();
 
     return (
         <div style={{height: "98vh"}} className={"w-screen h-screen flex"}>
-            <OpenStreetMap className={"w-2/3 m-3 shadow-2xl"}>
-                <Land collection={controller.coordinatesSet.WGS84}/>
+            <OpenStreetMap className={"grow-0 w-2/3 h-full m-3 shadow-2xl"}>
+                <Land collection={controller.coordinatesSet.WGS_84}/>
             </OpenStreetMap>
-            <div className={"w-auto h-full flex grow flex-col m-3 p-3 space-y-2 justify-start items-stretch"}>
+            <div className={"grow flex flex-col h-full m-3 p-3"}>
                 <div className={"px-1 flex flex-row space-x-4"}>
                     <Input value={controller.coordinatesInput.value}
                            onChange={event => controller.coordinatesInput.set(event.target.value)}
-                           placeholder={"Start typing coordinates in pairs WGS84 or GGRS87 separated by commas (,)"}
+                           placeholder={"Start typing coordinates in pairs WGS-84 or GGRS-87 separated by commas (,)"}
                            variant={"standard"} className={"w-full"}/>
                     <IconButton onClick={controller.handlers.locationButton.onClick}><Location2/></IconButton>
                 </div>
@@ -115,22 +115,27 @@ export function DekstopView()
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
-export function MobileView()
+export function Mobile()
 {
     let controller = useController();
 
     return (
-        <Tabs value={"0"}>
+        <Tabs value={"div"} className={"h-full border-2 border-red-500 border-red-300"}>
             <TabsHeader>
-                <Tab value={""}>
-                    DIV
+                <Tab value={"div"}>
+                    <Earth style={{width: "1.25em"}}/>
+                    MAP
                 </Tab>
             </TabsHeader>
-            <TabsBody>
-
+            <TabsBody className={"border-2 border-green-500 h-full"}>
+                <TabPanel className={"h-full"} value={"div"}>
+                    <OpenStreetMap style={{height: "95vh"}}>
+                        <Land collection={controller.coordinatesSet.WGS_84}/>
+                    </OpenStreetMap>
+                </TabPanel>
             </TabsBody>
         </Tabs>
 
@@ -151,7 +156,7 @@ export function MobileView()
 // 537403.08, 4133568.55,
 // 537341.57, 4133643.95,
 // 537321.72, 4133681.00,
-// 537317.75, 4133696.87
+// 537317.75, 4133696.87,
 
 
 //15876.0

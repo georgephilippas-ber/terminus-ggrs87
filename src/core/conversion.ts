@@ -31,7 +31,7 @@ function calculate(sourceCollection: Collection, targetCoordinateSystem: "utm" |
 }
 
 type coordinatesSet_type = {
-    UTM: Collection, WGS84: Collection
+    UTM: Collection, WGS_84: Collection
 };
 
 export function getCoordinatesSet(sourceCollection: Collection): coordinatesSet_type
@@ -49,7 +49,7 @@ export function getCoordinatesSet(sourceCollection: Collection): coordinatesSet_
     }
 
     return {
-        UTM: utm, WGS84: wsg84
+        UTM: utm, WGS_84: wsg84
     }
 }
 
@@ -57,10 +57,10 @@ export function toTableData(collectionSet: coordinatesSet_type): number[][]
 {
     let data_: number[][] = [];
 
-    let length: number = Math.min(collectionSet.UTM.length(), collectionSet.WGS84.length());
+    let length: number = Math.min(collectionSet.UTM.length(), collectionSet.WGS_84.length());
 
     for (let i = 0; i < length; i++)
-        data_.push([collectionSet.WGS84.getCollection()[i][0], collectionSet.WGS84.getCollection()[i][1], collectionSet.UTM.getCollection()[i][0], collectionSet.UTM.getCollection()[i][1]]);
+        data_.push([collectionSet.WGS_84.getCollection()[i][0], collectionSet.WGS_84.getCollection()[i][1], collectionSet.UTM.getCollection()[i][0], collectionSet.UTM.getCollection()[i][1]]);
 
     return data_;
 }
