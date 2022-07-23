@@ -1,20 +1,23 @@
 import "./main.css"
 
+import {Location2} from "@styled-icons/icomoon"
+
 import {OpenStreetMap} from "../fundamental";
 import {Land} from "../land";
-import React, {useMemo, useState} from "react";
+import React, {MouseEventHandler, useMemo, useState} from "react";
 
 import {processPlane} from "../../core/point-collection";
 
-import {Input} from "@material-tailwind/react";
+import {IconButton, Input} from "@material-tailwind/react";
 import {getSet, toTableData} from "../../core/conversion";
 
 function TableRow(props: { index: number; data: number[] })
 {
     return (
-        <tr key={props.index}>
+        <tr>
             <th style={{fontSize: "1.15em"}}>{props.index}</th>
-            {props.data.map(value => <td>{value.toLocaleString("en-GB", {maximumFractionDigits: 2})}</td>)}
+            {props.data.map((value, index) => <td
+                key={index}>{value.toLocaleString("en-GB", {maximumFractionDigits: 2})}</td>)}
         </tr>
     );
 }
@@ -54,9 +57,22 @@ export function Container()
 {
     let [textInputValue, setTextInputValue] = useState<string>("");
 
-    let collectionSet = useMemo(() => {
+    let collectionSet = useMemo(() =>
+    {
         return getSet(processPlane(textInputValue))
     }, [textInputValue]);
+
+    let onLocationButtonClick: MouseEventHandler<HTMLButtonElement> = (event) =>
+    {
+        if ("geolocation" in navigator)
+            navigator.geolocation.getCurrentPosition(position =>
+            {
+                if (textInputValue.trim())
+                    setTextInputValue([textInputValue, position.coords.latitude, position.coords.longitude].join(", "));
+                else
+                    setTextInputValue([position.coords.latitude, position.coords.longitude].join(", "));
+            });
+    }
 
     return (
         <div style={{height: "98vh"}} className={"w-screen h-screen flex"}>
@@ -64,8 +80,13 @@ export function Container()
                 <Land collection={collectionSet.wsg84}/>
             </OpenStreetMap>
             <div className={"w-auto h-full flex grow flex-col m-3 p-3 space-y-2 justify-start items-stretch"}>
-                <Input value={textInputValue} onChange={event => setTextInputValue(event.target.value)}
-                       placeholder={"Start typing coordinates in pairs WGS84 or GGRS87 separated by commas (,)"} variant={"standard"} className={"w-full"}/>
+                <div className={"px-1 flex flex-row space-x-4"}>
+                    <Input value={textInputValue} onChange={event => setTextInputValue(event.target.value)}
+                           placeholder={"Start typing coordinates in pairs WGS84 or GGRS87 separated by commas (,)"}
+                           variant={"standard"} className={"w-full"}/>
+
+                    <IconButton onClick={onLocationButtonClick}><Location2/></IconButton>
+                </div>
                 <CoordinatesTable data={toTableData(collectionSet)}/>
                 <div className={"status w-full py-3 px-4 shadow-grey-600 shadow-2xl"}>
                     {collectionSet.utm.area() !== -1 ? collectionSet.utm.area().toLocaleString("en-GB", {maximumFractionDigits: 2}) + " m²" : "0 m²"}
