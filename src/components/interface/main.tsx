@@ -13,7 +13,7 @@ import {coordinatesSet_type, getCoordinatesSet, toTableData} from "../../core/co
 import {action, computed, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
 
-import { Email, Globe, Send, Table} from "../../assets/assets";
+import {Email, Globe, Send, Table} from "../../assets/assets";
 
 function TableRow(props: { index: number; data: number[] })
 {
@@ -143,16 +143,16 @@ let Share = observer(() =>
     return (
         <div className={"w-full h-full flex flex-col p-3 space-y-2.5"}>
             <div className={"flex space-x-2"}>
-                <Input placeholder={"recipient e-mail address"} variant={"standard"}/>
-                <IconButton color={"green"} variant={"filled"}>
-                    <Send size={"1.35em"}/>
-                </IconButton>
-            </div>
-            <div className={"flex space-x-2"}>
-                <Input placeholder={"filename (.DXF implied)"} variant={"standard"}/>
-                <IconButton variant={"filled"}>
-                    <Download/>
-                </IconButton>
+                <Input value={controller.shareEmail} onChange={event => controller.setShareEmail(event.target.value)}
+                       placeholder={"recipient e-mail address"} variant={"standard"}/>
+                <a href={"mailto:" + controller.shareEmail + "?body=" + JSON.stringify({
+                    points: controller.getSet.UTM.getCollection(),
+                    dxf: controller.getSet.UTM.DXFString()
+                })}>
+                    <IconButton variant={"outlined"}>
+                        <Send size={"1.35em"}/>
+                    </IconButton>
+                </a>
             </div>
         </div>
     );

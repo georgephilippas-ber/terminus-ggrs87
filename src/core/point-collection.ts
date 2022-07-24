@@ -1,3 +1,5 @@
+import Drawing, {Point2D} from "dxf-writer";
+
 type coords = number[];
 
 type coords_array = coords[];
@@ -94,6 +96,20 @@ export class Collection
     validateBounds(bounds: bounds_type)
     {
         return !Array(this.dimension()).fill(0).map((value, index) => this.array_.filter(value => value[index] >= bounds[index].min && value[index] <= bounds[index].max).length).filter(value => value !== this.array_.length).length
+    }
+
+    DXFString(): string
+    {
+        let drawing = new Drawing();
+
+        drawing.setUnits("Meters");
+
+        drawing.addLayer("Terminus", Drawing.ACI.WHITE, "CONTINUOUS");
+        drawing.setActiveLayer("Terminus");
+
+        drawing.drawPolyline(this.array_ as Point2D[], true);
+
+        return drawing.toDxfString();
     }
 }
 
