@@ -1,18 +1,19 @@
 import "./main.css"
 
-import {Location2} from "@styled-icons/icomoon"
+import {Download, Location2, Share2} from "@styled-icons/icomoon"
 
 import {OpenStreetMap} from "../fundamental";
 import {Land} from "../land";
-import React, {MouseEventHandler, useMemo, useState} from "react";
+import React, {MouseEventHandler} from "react";
 
 import {process} from "../../core/point-collection";
 
-import {IconButton, Input, Tabs, Tab, TabsBody, TabsHeader, TabPanel} from "@material-tailwind/react";
+import {Button, IconButton, Input, Tab, TabPanel, Tabs, TabsBody, TabsHeader} from "@material-tailwind/react";
 import {coordinatesSet_type, getCoordinatesSet, toTableData} from "../../core/conversion";
 import {action, computed, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
-import {Globe, Table} from "../../assets/assets";
+
+import { Email, Globe, Send, Table} from "../../assets/assets";
 
 function TableRow(props: { index: number; data: number[] })
 {
@@ -59,16 +60,20 @@ function CoordinatesTable(props: { data: number[][] })
 class Controller
 {
     coordinatesInput: string;
+    shareEmail: string;
 
     constructor()
     {
         this.coordinatesInput = "";
+        this.shareEmail = "";
 
         makeObservable(this, {
             coordinatesInput: observable,
-            getSet: computed,
             setCoordinatesInput: action,
-            onClick_locationButton: action
+            getSet: computed,
+            onClick_locationButton: action,
+            shareEmail: observable,
+            setShareEmail: action
         });
     }
 
@@ -80,6 +85,11 @@ class Controller
     setCoordinatesInput(coordinatesInput: string)
     {
         this.coordinatesInput = coordinatesInput;
+    }
+
+    setShareEmail(shareEmail: string)
+    {
+        return this.shareEmail = shareEmail;
     }
 
     onClick_locationButton: MouseEventHandler<HTMLButtonElement> = (event) =>
@@ -128,12 +138,32 @@ export const Desktop = observer(() =>
     );
 });
 
+let Share = observer(() =>
+{
+    return (
+        <div className={"w-full h-full flex flex-col p-3 space-y-2.5"}>
+            <div className={"flex space-x-2"}>
+                <Input placeholder={"recipient e-mail address"} variant={"standard"}/>
+                <IconButton color={"green"} variant={"filled"}>
+                    <Send size={"1.35em"}/>
+                </IconButton>
+            </div>
+            <div className={"flex space-x-2"}>
+                <Input placeholder={"filename (.DXF implied)"} variant={"standard"}/>
+                <IconButton variant={"filled"}>
+                    <Download/>
+                </IconButton>
+            </div>
+        </div>
+    );
+});
+
 export const Mobile = observer(() =>
 {
     let coordinatesSet = controller.getSet;
 
     return (
-        <Tabs value={"table"} className={"h-full"}>
+        <Tabs value={"email"} className={"h-full"}>
             <TabsHeader>
                 <Tab value={"map"}>
                     <div className={"flex flex-row space-x-5"}>
@@ -145,6 +175,12 @@ export const Mobile = observer(() =>
                     <div className={"flex flex-row space-x-5"}>
                         <Table size={"1.85em"}/>
                         <div style={{fontFamily: "Cabin, sans-serif", fontSize: "1.15rem"}}>Data</div>
+                    </div>
+                </Tab>
+                <Tab value={"email"}>
+                    <div className={"flex flex-row space-x-5"}>
+                        <Email size={"1.85em"}/>
+                        <div style={{fontFamily: "Cabin, sans-serif", fontSize: "1.15rem"}}>Share</div>
                     </div>
                 </Tab>
             </TabsHeader>
@@ -178,26 +214,29 @@ export const Mobile = observer(() =>
                         {coordinatesSet.UTM.area() !== -1 ? coordinatesSet.UTM.area().toLocaleString("en-GB", {maximumFractionDigits: 2}) + " m²" : "0 m²"}
                     </div>
                 </TabPanel>
+                <TabPanel value={"email"}>
+                    <Share/>
+                </TabPanel>
             </TabsBody>
         </Tabs>
     );
 });
 
-    // 537298.57, 4133737.88,
-    // 537315.77, 4133753.76,
-    // 537348.18, 4133727.96,
-    // 537377.29, 4133711.42,
-    // 537403.74, 4133680.34,
-    // 537419.62, 4133665.78,
-    // 537480.47, 4133614.85,
-    // 537474.52, 4133602.94,
-    // 537463.28, 4133590.38,
-    // 537445.42, 4133561.93,
-    // 537422.27, 4133525.55,
-    // 537403.08, 4133568.55,
-    // 537341.57, 4133643.95,
-    // 537321.72, 4133681.00,
-    // 537317.75, 4133696.87,
+// 537298.57, 4133737.88,
+// 537315.77, 4133753.76,
+// 537348.18, 4133727.96,
+// 537377.29, 4133711.42,
+// 537403.74, 4133680.34,
+// 537419.62, 4133665.78,
+// 537480.47, 4133614.85,
+// 537474.52, 4133602.94,
+// 537463.28, 4133590.38,
+// 537445.42, 4133561.93,
+// 537422.27, 4133525.55,
+// 537403.08, 4133568.55,
+// 537341.57, 4133643.95,
+// 537321.72, 4133681.00,
+// 537317.75, 4133696.87,
 
 
 //15876.0
