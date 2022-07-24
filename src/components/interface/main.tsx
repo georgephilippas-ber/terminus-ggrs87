@@ -1,6 +1,6 @@
 import "./main.css"
 
-import {Earth, Location2} from "@styled-icons/icomoon"
+import {Earth, Location2, Table} from "@styled-icons/icomoon"
 
 import {OpenStreetMap} from "../fundamental";
 import {Land} from "../land";
@@ -9,7 +9,9 @@ import React, {MouseEventHandler, useMemo, useState} from "react";
 import {process} from "../../core/point-collection";
 
 import {IconButton, Input, Tabs, Tab, TabsBody, TabsHeader, TabPanel} from "@material-tailwind/react";
-import {getCoordinatesSet, toTableData} from "../../core/conversion";
+import {coordinatesSet_type, getCoordinatesSet, toTableData} from "../../core/conversion";
+import {action, computed, makeObservable, observable} from "mobx";
+import {observer} from "mobx-react";
 
 function TableRow(props: { index: number; data: number[] })
 {
@@ -53,92 +55,117 @@ function CoordinatesTable(props: { data: number[][] })
     )
 }
 
-export function useController()
+class Controller
 {
-    let [coordinatesInput, setCoordinatesInput] = useState<string>("");
+    coordinatesInput: string;
 
-    let coordinatesSet = useMemo(() =>
+    constructor()
     {
-        return getCoordinatesSet(process(coordinatesInput));
-    }, [coordinatesInput]);
+        this.coordinatesInput = "";
 
-    let onClick_locationButton: MouseEventHandler<HTMLButtonElement> = (event) =>
-    {
-        navigator.geolocation.getCurrentPosition(position =>
-        {
-            let coordinates = [position.coords.latitude, position.coords.longitude];
-
-            if (coordinatesInput.trim())
-                setCoordinatesInput([coordinatesInput, ...coordinates].join(", "));
-            else
-                setCoordinatesInput(coordinates.join(", "));
+        makeObservable(this, {
+            coordinatesInput: observable,
+            getSet: computed,
+            setCoordinatesInput: action,
+            onClick_locationButton: action
         });
     }
 
-    return {
-        coordinatesInput:
-            {
-                value: coordinatesInput,
-                set: setCoordinatesInput,
-            },
-        coordinatesSet,
-        handlers:
-            {
-                locationButton:
-                    {
-                        onClick: onClick_locationButton
-                    }
-            }
+    get getSet(): coordinatesSet_type
+    {
+        return getCoordinatesSet(process(this.coordinatesInput));
     }
+
+    setCoordinatesInput(coordinatesInput: string)
+    {
+        this.coordinatesInput = coordinatesInput;
+    }
+
+    onClick_locationButton: MouseEventHandler<HTMLButtonElement> = (event) =>
+        {
+            navigator.geolocation.getCurrentPosition(position =>
+            {
+                let coordinates = [position.coords.latitude, position.coords.longitude];
+
+                if (this.coordinatesInput.trim())
+                    this.setCoordinatesInput([this.coordinatesInput, ...coordinates].join(", "));
+                else
+                    this.setCoordinatesInput(coordinates.join(", "));
+            });
+        }
 }
 
-export function Desktop()
+export const controller = new Controller();
+
+export const Desktop = observer(() =>
 {
-    let controller = useController();
+    let coordinatesSet = controller.getSet;
 
     return (
         <div style={{height: "98vh"}} className={"w-screen h-screen flex"}>
             <OpenStreetMap className={"grow-0 w-2/3 h-full m-3 shadow-2xl"}>
-                <Land collection={controller.coordinatesSet.WGS_84}/>
+                <Land collection={coordinatesSet.WGS_84}/>
             </OpenStreetMap>
             <div className={"grow flex flex-col h-full m-3 p-3"}>
                 <div className={"px-1 flex flex-row space-x-4"}>
-                    <Input value={controller.coordinatesInput.value}
-                           onChange={event => controller.coordinatesInput.set(event.target.value)}
+                    <Input value={controller.coordinatesInput}
+                           onChange={event => controller.setCoordinatesInput(event.target.value)}
                            placeholder={"Start typing coordinates in pairs WGS-84 or GGRS-87 separated by commas (,)"}
                            variant={"standard"} className={"w-full"}/>
-                    <IconButton onClick={controller.handlers.locationButton.onClick}><Location2/></IconButton>
+                    <IconButton onClick={controller.onClick_locationButton}><Location2/></IconButton>
                 </div>
-                <CoordinatesTable data={toTableData(controller.coordinatesSet)}/>
+                <CoordinatesTable data={toTableData(coordinatesSet)}/>
                 <div className={"status w-full py-3 px-4 shadow-grey-600 shadow-2xl"}>
-                    {controller.coordinatesSet.UTM.area() !== -1 ? controller.coordinatesSet.UTM.area().toLocaleString("en-GB", {maximumFractionDigits: 2}) + " m²" : "0 m²"}
+                    {coordinatesSet.UTM.area() !== -1 ? coordinatesSet.UTM.area().toLocaleString("en-GB", {maximumFractionDigits: 2}) + " m²" : "0 m²"}
                 </div>
             </div>
         </div>
     );
-}
+});
 
 export function Mobile()
 {
-    let controller = useController();
+    let coordinatesSet = controller.getSet;
 
     return (
-        <Tabs value={"div"} className={"h-full border-2 border-red-500 border-red-300"}>
+        <Tabs value={"map"} className={"h-full border-2 border-red-500 border-red-300"}>
             <TabsHeader>
-                <Tab value={"div"}>
-                    <Earth style={{width: "1.25em"}}/>
-                    MAP
+                <Tab value={"map"}>
+                    <div className={"flex flex-row space-x-3"}>
+                        <Earth style={{width: "1.25em"}}/>
+                        <div>Map</div>
+                    </div>
+                </Tab>
+                <Tab value={"table"}>
+                    <div className={"flex flex-row space-x-3"}>
+                        <Table style={{width: "1.25em"}}/>
+                        <div>Table</div>
+                    </div>
                 </Tab>
             </TabsHeader>
             <TabsBody className={"border-2 border-green-500 h-full"}>
-                <TabPanel className={"h-full"} value={"div"}>
-                    <OpenStreetMap style={{height: "95vh"}}>
-                        <Land collection={controller.coordinatesSet.WGS_84}/>
-                    </OpenStreetMap>
+                <TabPanel className={"h-full"} value={"map"}>
+                    {/*<OpenStreetMap style={{height: "95vh"}}>*/}
+                    {/*    <Land collection={controller.coordinatesSet.WGS_84}/>*/}
+                    {/*</OpenStreetMap>*/}
+                </TabPanel>
+                <TabPanel value={"table"}>
+                    <div className={"flex flex-col h-full"}>
+                        <div className={"px-1 flex flex-row space-x-4"}>
+                            <Input value={controller.coordinatesInput}
+                                   onChange={event => controller.setCoordinatesInput(event.target.value)}
+                                   placeholder={"Start typing coordinates in pairs WGS-84 or GGRS-87 separated by commas (,)"}
+                                   variant={"standard"} className={"w-full"}/>
+                            <IconButton onClick={controller.onClick_locationButton}><Location2/></IconButton>
+                        </div>
+                        <CoordinatesTable data={toTableData(coordinatesSet)}/>
+                        <div className={"status w-full py-3 px-4 shadow-grey-600 shadow-2xl"}>
+                            {coordinatesSet.UTM.area() !== -1 ? coordinatesSet.UTM.area().toLocaleString("en-GB", {maximumFractionDigits: 2}) + " m²" : "0 m²"}
+                        </div>
+                    </div>
                 </TabPanel>
             </TabsBody>
         </Tabs>
-
     );
 }
 

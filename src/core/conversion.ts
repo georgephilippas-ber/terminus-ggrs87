@@ -30,7 +30,7 @@ function calculate(sourceCollection: Collection, targetCoordinateSystem: "utm" |
     return targetCollection;
 }
 
-type coordinatesSet_type = {
+export type coordinatesSet_type = {
     UTM: Collection, WGS_84: Collection
 };
 
