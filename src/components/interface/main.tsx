@@ -145,10 +145,10 @@ let Share = observer(() =>
             <div className={"flex space-x-2"}>
                 <Input value={controller.shareEmail} onChange={event => controller.setShareEmail(event.target.value)}
                        placeholder={"recipient e-mail address"} variant={"standard"}/>
-                <a href={"mailto:" + controller.shareEmail + "?body=" + JSON.stringify({
+                <a href={controller.shareEmail.trim() && controller.coordinatesInput.trim() ? "mailto:" + controller.shareEmail + "?body=" + JSON.stringify({
                     points: controller.getSet.UTM.getCollection(),
                     dxf: controller.getSet.UTM.DXFString()
-                })}>
+                }) : "#"}>
                     <IconButton variant={"outlined"}>
                         <Send size={"1.35em"}/>
                     </IconButton>
@@ -163,7 +163,7 @@ export const Mobile = observer(() =>
     let coordinatesSet = controller.getSet;
 
     return (
-        <Tabs value={"email"} className={"h-full"}>
+        <Tabs value={"map"} className={"h-full"}>
             <TabsHeader>
                 <Tab value={"map"}>
                     <div className={"flex flex-row space-x-5"}>
