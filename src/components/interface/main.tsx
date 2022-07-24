@@ -1,6 +1,6 @@
 import "./main.css"
 
-import {Download, Location2, Share2} from "@styled-icons/icomoon"
+import {Location2} from "@styled-icons/icomoon"
 
 import {OpenStreetMap} from "../fundamental";
 import {Land} from "../land";
@@ -8,7 +8,7 @@ import React, {MouseEventHandler} from "react";
 
 import {process} from "../../core/point-collection";
 
-import {Button, IconButton, Input, Tab, TabPanel, Tabs, TabsBody, TabsHeader} from "@material-tailwind/react";
+import {IconButton, Input, Tab, TabPanel, Tabs, TabsBody, TabsHeader} from "@material-tailwind/react";
 import {coordinatesSet_type, getCoordinatesSet, toTableData} from "../../core/conversion";
 import {action, computed, makeObservable, observable} from "mobx";
 import {observer} from "mobx-react";
@@ -92,7 +92,7 @@ class Controller
         return this.shareEmail = shareEmail;
     }
 
-    onClick_locationButton: MouseEventHandler<HTMLButtonElement> = (event) =>
+    onClick_locationButton: MouseEventHandler<HTMLButtonElement> = () =>
     {
         navigator.geolocation.getCurrentPosition(position =>
         {
